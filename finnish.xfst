@@ -1,0 +1,40 @@
+clear stack
+
+!define stems as words from finnish_stems.txt
+read text finnish_stems.txt
+define stem
+
+!helpful patterns
+define Vowel [a|e|i|o|u|I] ;
+define Consonant [b|c|d|f|g|h|j|k|l|m|n|p|q|r|s|t|v|w|x|y|z] ;
+define largeStem [ ? ? ? ? (%I) ];
+
+!define combinations of stems + tags
+define num  [%+Sg:0 | %+Pl: {I} ];
+define case [%+Nom:0 | %+Part:{ta}];
+define word stem num case;
+
+!transformation rules
+define rule1 [{uo} ->o, {ie} -> e || _I  ];
+
+define rule2 [{aa} -> a, {ee} -> e, {ii} -> i, {oo} -> o, {uu} -> u  || _I] ;
+
+define rule3 [a -> 0 || [u|o]_I];
+
+define rule4 [a -> o, i -> e || _I];
+
+define rule5 [{ta} -> a ||largeStem  _[.#.] ];
+
+define rule6 [I -> j || Vowel_Vowel] ;
+
+define rule7 [I -> i];
+
+
+
+!compose rules into one
+define morphparser word .o. rule1 .o. rule2 .o. rule3 .o. rule4 .o. rule5 .o. rule6 .o. rule7;
+
+
+
+
+push morphparser
